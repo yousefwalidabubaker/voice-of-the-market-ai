@@ -60,7 +60,7 @@ For this case study, I translated the hackathon solution into a product portfoli
 | [Product requirements](docs/PRODUCT_REQUIREMENTS.md) | Functional and non-functional requirements |
 | [MVP scope](docs/MVP_SCOPE.md) | What ships first, what does not, and definition of done |
 | [Product backlog](docs/PRODUCT_BACKLOG.md) | Prioritized epics, user stories, criteria, and estimates |
-| [User flows](docs/USER_FLOWS.md) | Customer, market, and operations journeys |
+| [User flows](docs/FLOWS.md) | Customer, market, and operations journeys |
 | [Roadmap](docs/ROADMAP.md) | Validation-to-scale delivery plan |
 | [Metrics](docs/METRICS_AND_ANALYTICS.md) | North-star metric, KPIs, events, and experiments |
 | [Risks](docs/RISKS_AND_ASSUMPTIONS.md) | Key risks, assumptions, mitigations, and open questions |
