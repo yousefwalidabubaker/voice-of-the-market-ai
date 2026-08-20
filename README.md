@@ -9,7 +9,7 @@
 **Host:** Birzeit University  
 **Format:** 24-hour national hackathon with university teams from across Palestine
 
-## The engineering problem
+## The Software Engineering Problem
 
 A store can technically have inventory recorded in its system while the actual shelf or refrigerator is empty. That gap between recorded stock and real-world availability creates delayed replenishment and lost sales.
 
@@ -20,7 +20,7 @@ Voice of the Market was designed as an AI-assisted system that combines two inde
 
 The system then validates, classifies, prioritizes, and routes those signals so the market and supplier can react faster.
 
-## Proposed system architecture
+## Proposed System Architecture
 
 ```text
 Refrigerator Camera
@@ -43,7 +43,7 @@ Customer QR Report ---------->| Ingestion / Validation Layer
                      Dashboard
 ```
 
-### Main components
+### Main Components
 
 - **Edge camera input** for product-presence and stock-state detection
 - **Computer vision layer** to classify products as available, low, or missing
@@ -56,7 +56,7 @@ Customer QR Report ---------->| Ingestion / Validation Layer
 - **Alert service** to notify both Siniora and the market when action is needed
 - **Dashboard** for product availability, report status, and replenishment follow-up
 
-## System flow
+## System Flow
 
 1. The camera observes the refrigerator and detects a low-stock or out-of-stock state.
 2. A customer can independently scan the market QR code and report the same issue.
@@ -67,13 +67,13 @@ Customer QR Report ---------->| Ingestion / Validation Layer
 7. The market confirms the current state or starts a replenishment action.
 8. Resolution time and updated availability are recorded for later analysis.
 
-## Engineering considerations
+## Software Engineering Considerations
 
-### Computer vision reliability
+### Computer Vision Reliability
 
 A production version would need to handle changing lighting, partially hidden products, similar packaging, camera angle changes, and confidence thresholds. Model accuracy would have to be evaluated using real refrigerator images rather than assumed from a controlled demo.
 
-### Duplicate and conflicting signals
+### Duplicate and Conflicting Signals
 
 The camera and customer reports can describe the same problem or disagree with one another. The system therefore needs timestamps, confidence values, product and market identifiers, and idempotent event handling so repeated input does not create noisy alerts.
 
@@ -81,7 +81,7 @@ The camera and customer reports can describe the same problem or disagree with o
 
 A refrigerator-side device cannot assume perfect connectivity. A stronger implementation would queue detections locally and retry delivery when the connection returns.
 
-### Security and privacy
+### Security and Privacy
 
 The camera is intended to monitor products, not customers. A production design should limit the field of view, avoid unnecessary personal data, authenticate market devices, validate QR submissions, and protect operational data exposed by the dashboard APIs.
 
@@ -89,23 +89,23 @@ The camera is intended to monitor products, not customers. A production design s
 
 Useful production metrics would include detection confidence, false-positive rate, event-processing latency, duplicate rate, unresolved incident age, and alert-delivery failures.
 
-## Repository contents
+## Repository Contents
 
 This repository preserves the design work created around the hackathon solution. The documents in `docs/` cover requirements, user flows, MVP boundaries, metrics, risks, assumptions, and rollout thinking that would act as inputs to an implementation.
 
-The repository currently focuses on **system design and technical planning rather than production source code**. That distinction is intentional so the project is not presented as a completed production AI system.
+The repository currently focuses on **Software Engineering system design and technical planning rather than production source code**. That distinction is intentional so the project is not presented as a completed production AI system.
 
-## My contribution
+## My Contribution
 
 I worked across the problem definition, system flow, AI-driven solution concept, feature priorities, technical discussions, and final pitch with the team.
 
 For this repository, I focused on turning the hackathon concept into a system that can be reasoned about technically: defining the signals, components, data flow, failure cases, architecture boundaries, and implementation considerations.
 
-## Hackathon result
+## Hackathon Result
 
 The Executive Congress won the **Voice of the Market** challenge at AINAK Challenges 2026. It was my third consecutive hackathon award.
 
-## Possible implementation path
+## Possible Implementation Path
 
 A future build could be split into four stages:
 
@@ -116,4 +116,4 @@ A future build could be split into four stages:
 
 ## Disclaimer
 
-This is a hackathon system-design project and not an official or production Siniora system. Any scale, performance, or business-impact assumptions would need to be validated through a real pilot.
+This is a hackathon Software Engineering system-design project and not an official or production Siniora system. Any scale, performance, or business-impact assumptions would need to be validated through a real pilot.
