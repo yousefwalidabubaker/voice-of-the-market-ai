@@ -1,6 +1,6 @@
 # Voice of the Market | AI Retail Availability System
 
-> Turning an empty shelf from a lost sale into a real-time action.
+> Turning an empty shelf from a lost sale into a real-time system signal.
 
 **Award:** Winner, *Voice of the Market* challenge | AINAK Challenges 2026  
 **Team:** The Executive Congress  
@@ -9,66 +9,111 @@
 **Host:** Birzeit University  
 **Format:** 24-hour national hackathon with university teams from across Palestine
 
-## The problem
+## The engineering problem
 
-Customers often discover that a product is unavailable before the brand or store knows there is a problem. Traditional inventory records may say that stock exists while the shelf or refrigerator is actually empty. That delay creates lost sales, poor customer experiences, and slower replenishment decisions.
+A store can technically have inventory recorded in its system while the actual shelf or refrigerator is empty. That gap between recorded stock and real-world availability creates delayed replenishment and lost sales.
 
-## The product
+Voice of the Market was designed as an AI-assisted system that combines two independent signals:
 
-Voice of the Market is a two-signal retail intelligence concept that combines:
+1. **Visual inventory monitoring** from a camera mounted inside the refrigerator.
+2. **Customer reports** submitted through a market-specific QR code.
 
-1. **AI-powered visual inventory monitoring** | a camera inside the market refrigerator detects whether Siniora products are available, running low, or missing.
-2. **Customer-powered reporting** | every participating market receives a unique QR code. A customer can report a missing product or request a product in seconds, without downloading an app.
+The system then validates, classifies, prioritizes, and routes those signals so the market and supplier can react faster.
 
-The platform verifies, classifies, and prioritizes incoming signals, then alerts both Siniora and the market. A dashboard shows product availability by location, report status, replenishment needs, and customer reward activity.
+## Proposed system architecture
 
-## Why the approach matters
+```text
+Refrigerator Camera
+        |
+        v
+Computer Vision Detection ----+
+                              |
+Customer QR Report ---------->| Ingestion / Validation Layer
+                              |
+                              v
+                     Deduplication + Priority
+                              |
+                              v
+                     Availability Event Store
+                         /             \
+                        v               v
+                 Operations API     Alert Service
+                        |
+                        v
+                     Dashboard
+```
 
-- **Two independent signals:** computer vision and customer reports improve visibility beyond a single data source.
-- **Low-friction reporting:** the QR flow removes the need for an app or account.
-- **Actionable alerts:** reports are prioritized rather than delivered as an unstructured inbox.
-- **Location intelligence:** availability can be viewed by market, city, and product.
-- **Aligned incentives:** verified customer reports can earn reward points.
+### Main components
 
-## Product flow
+- **Edge camera input** for product-presence and stock-state detection
+- **Computer vision layer** to classify products as available, low, or missing
+- **QR reporting flow** for customers to submit an independent availability signal
+- **Validation layer** to normalize reports and reject incomplete input
+- **Deduplication logic** to avoid treating repeated reports as separate incidents
+- **Priority engine** to rank incidents by urgency and business rules
+- **Event store** for availability history, timestamps, market, city, and product data
+- **Operations API** to expose current and historical availability to the dashboard
+- **Alert service** to notify both Siniora and the market when action is needed
+- **Dashboard** for product availability, report status, and replenishment follow-up
 
-1. The camera monitors the refrigerator and detects a low-stock or out-of-stock event.
+## System flow
+
+1. The camera observes the refrigerator and detects a low-stock or out-of-stock state.
 2. A customer can independently scan the market QR code and report the same issue.
-3. The system validates and classifies the signals, reduces duplicates, and assigns priority.
-4. Siniora and the market receive an actionable alert.
-5. The market confirms availability or starts a replenishment action.
-6. The dashboard records resolution time and updates local availability insights.
+3. Incoming signals are normalized and validated.
+4. Duplicate signals are combined instead of creating repeated incidents.
+5. The system assigns a priority based on product, market, signal confidence, and timing.
+6. An availability event is stored and sent to the relevant teams.
+7. The market confirms the current state or starts a replenishment action.
+8. Resolution time and updated availability are recorded for later analysis.
 
-## My product-management focus
+## Engineering considerations
 
-For this case study, I translated the hackathon solution into a product portfolio that covers:
+### Computer vision reliability
 
-- problem framing and stakeholder needs;
-- value proposition and product principles;
-- MVP definition and scope boundaries;
-- prioritized epics, user stories, and acceptance criteria;
-- success metrics and analytics events;
-- roadmap, assumptions, dependencies, and risks;
-- launch and validation plan.
+A production version would need to handle changing lighting, partially hidden products, similar packaging, camera angle changes, and confidence thresholds. Model accuracy would have to be evaluated using real refrigerator images rather than assumed from a controlled demo.
 
-## Repository map
+### Duplicate and conflicting signals
 
-| Document | Purpose |
-|---|---|
-| [Product vision](docs/PRODUCT_VISION.md) | Vision, positioning, principles, and strategic choices |
-| [Users and problem](docs/USERS_AND_PROBLEM.md) | Personas, jobs to be done, and pain points |
-| [Product requirements](docs/PRODUCT_REQUIREMENTS.md) | Functional and non-functional requirements |
-| [MVP scope](docs/MVP_SCOPE.md) | What ships first, what does not, and definition of done |
-| [Product backlog](docs/PRODUCT_BACKLOG.md) | Prioritized epics, user stories, criteria, and estimates |
-| [User flows](docs/FLOWS.md) | Customer, market, and operations journeys |
-| [Roadmap](docs/ROADMAP.md) | Validation-to-scale delivery plan |
-| [Metrics](docs/METRICS_AND_ANALYTICS.md) | North-star metric, KPIs, events, and experiments |
-| [Risks](docs/RISKS_AND_ASSUMPTIONS.md) | Key risks, assumptions, mitigations, and open questions |
+The camera and customer reports can describe the same problem or disagree with one another. The system therefore needs timestamps, confidence values, product and market identifiers, and idempotent event handling so repeated input does not create noisy alerts.
+
+### Connectivity
+
+A refrigerator-side device cannot assume perfect connectivity. A stronger implementation would queue detections locally and retry delivery when the connection returns.
+
+### Security and privacy
+
+The camera is intended to monitor products, not customers. A production design should limit the field of view, avoid unnecessary personal data, authenticate market devices, validate QR submissions, and protect operational data exposed by the dashboard APIs.
+
+### Observability
+
+Useful production metrics would include detection confidence, false-positive rate, event-processing latency, duplicate rate, unresolved incident age, and alert-delivery failures.
+
+## Repository contents
+
+This repository preserves the design work created around the hackathon solution. The documents in `docs/` cover requirements, user flows, MVP boundaries, metrics, risks, assumptions, and rollout thinking that would act as inputs to an implementation.
+
+The repository currently focuses on **system design and technical planning rather than production source code**. That distinction is intentional so the project is not presented as a completed production AI system.
+
+## My contribution
+
+I worked across the problem definition, system flow, AI-driven solution concept, feature priorities, technical discussions, and final pitch with the team.
+
+For this repository, I focused on turning the hackathon concept into a system that can be reasoned about technically: defining the signals, components, data flow, failure cases, architecture boundaries, and implementation considerations.
 
 ## Hackathon result
 
-The Executive Congress won the **Voice of the Market** challenge at AINAK Challenges 2026. This was my third consecutive hackathon win.
+The Executive Congress won the **Voice of the Market** challenge at AINAK Challenges 2026. It was my third consecutive hackathon award.
 
-## Status and disclaimer
+## Possible implementation path
 
-This repository is a product-management case study based on a hackathon prototype. It is not an official or production Siniora system, and all scale, performance, and business-impact targets are hypotheses to validate through pilots.
+A future build could be split into four stages:
+
+1. Build a QR reporting API and basic availability dashboard.
+2. Add an event model, deduplication rules, and alert pipeline.
+3. Connect a camera prototype and store confidence-scored detections.
+4. Evaluate the computer vision model on real refrigerator images and iterate based on measured accuracy.
+
+## Disclaimer
+
+This is a hackathon system-design project and not an official or production Siniora system. Any scale, performance, or business-impact assumptions would need to be validated through a real pilot.
